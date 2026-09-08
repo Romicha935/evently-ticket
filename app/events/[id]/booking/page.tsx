@@ -1,22 +1,47 @@
-import SeatMap from "@/app/components/booking/SeatMap";
+import Container from "@/app/components/ui/Container";
+import BookingContent from "@/app/components/booking/BookingContent";
 
+import { featuredEvents } from "@/app/event";
 
-export default function BookingPage() {
+interface BookingPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function BookingPage({
+  params,
+}: BookingPageProps) {
+  const { id } = await params;
+
+  const event = featuredEvents.find((item) => item.id === id);
+
+  if (!event) {
+    return (
+      <main className="min-h-screen bg-gray-50 py-20">
+        <Container>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Event Not Found
+            </h1>
+
+            <p className="mt-3 text-gray-500">
+              The event you are looking for does not exist.
+            </p>
+          </div>
+        </Container>
+      </main>
+    );
+  }
+
   return (
-    <main className="min-h-screen bg-gray-50 py-10">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">
-          Select Your Seats
-        </h1>
-
-        <p className="mb-8 text-gray-500">
-          Choose your preferred seats for this event.
-        </p>
-
-        <SeatMap
+    <main className="min-h-screen bg-gray-50 py-10 sm:py-14">
+      <Container>
+        <BookingContent
+          eventId={event.id}
+          eventTitle={event.title}
+          ticketPrice={event.price}
           bookedSeats={["A2", "A3", "B5", "C1", "D7"]}
         />
-      </div>
+      </Container>
     </main>
   );
 }
