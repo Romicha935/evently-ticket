@@ -29,18 +29,18 @@ export default function HomeCTA() {
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/events"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 text-sm font-semibold text-white transition-colors hover:bg-violet-700"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 text-sm font-semibold !text-white transition-colors hover:bg-violet-700"
               >
                 Explore Events
                 <ArrowRight size={18} />
               </Link>
 
-              <Link
-                href="/register"
-                className="inline-flex h-12 items-center justify-center rounded-xl border border-gray-700 bg-gray-800 px-6 text-sm font-semibold text-white transition-colors hover:bg-gray-700"
-              >
-                Create an Account
-              </Link>
+             <Link
+  href="/register"
+  className="inline-flex h-12 items-center justify-center rounded-xl border border-gray-700 bg-gray-800 px-6 text-sm font-semibold !text-white transition-all hover:bg-gray-700 active:scale-95"
+>
+  Create an Account
+</Link>
             </div>
           </div>
         </div>
