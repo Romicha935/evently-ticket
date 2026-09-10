@@ -11,7 +11,7 @@ import {
   Ticket,
   User,
 } from "lucide-react";
-
+import { setUser } from "@/app/lib/auth";
 export default function RegisterContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -35,19 +35,20 @@ export default function RegisterContent() {
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
 
-    console.log({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    });
-  };
+  setUser({
+    name: formData.name,
+    email: formData.email,
+  });
+
+  window.location.href = "/account";
+};
 
   const passwordLength = formData.password.length >= 8;
   const passwordMatch =
