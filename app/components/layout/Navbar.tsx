@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import Container from "../ui/Container";
 import Button from "../ui/Button";
+import Image from "next/image";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -23,8 +24,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-gray-900"
+            className="text-xl font-bold tracking-tight flex items-center text-gray-900"
           >
+            <Image src="/logo.svg" alt="Evently Logo" width={40} height={40} />
             Event<span className="text-violet-600">ly</span>
           </Link>
 

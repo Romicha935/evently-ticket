@@ -1,6 +1,15 @@
-import { EventCardProps } from "@/components/event/EventCard";
+import { EventCardProps } from "./components/event/EventCard";
 
-export const featuredEvents: EventCardProps[] = [
+
+export interface EventData extends EventCardProps {
+  startTime: string;
+  endTime: string;
+  availableSeats: number;
+  totalSeats: number;
+  description: string;
+}
+
+export const featuredEvents: EventData[] = [
   {
     id: "summer-music-festival",
     title: "Summer Music Festival 2026",
@@ -9,32 +18,176 @@ export const featuredEvents: EventCardProps[] = [
     location: "Dhaka, Bangladesh",
     price: 25,
     image: "/events/music.jpg",
+    startTime: "6:00 PM",
+    endTime: "10:00 PM",
+    availableSeats: 120,
+    totalSeats: 500,
+    description:
+      "Experience an unforgettable evening filled with live music, talented artists and an amazing crowd.",
   },
   {
-    id: "tech-conference",
+    id: "future-tech-conference",
     title: "Future Tech Conference",
-    category: "Conference",
+    category: "Technology",
     date: "Sep 28, 2026",
     location: "Dhaka, Bangladesh",
     price: 40,
     image: "/events/tech.jpg",
+    startTime: "9:00 AM",
+    endTime: "5:00 PM",
+    availableSeats: 180,
+    totalSeats: 400,
+    description:
+      "Explore the latest trends in AI, software development, cloud computing and the future of technology.",
   },
   {
-    id: "creative-workshop",
+    id: "creative-design-workshop",
     title: "Creative Design Workshop",
     category: "Workshop",
     date: "Oct 05, 2026",
     location: "Chattogram, Bangladesh",
     price: 15,
     image: "/events/workshop.jpg",
+    startTime: "10:00 AM",
+    endTime: "3:00 PM",
+    availableSeats: 45,
+    totalSeats: 100,
+    description:
+      "A practical workshop for designers and creators who want to improve their creative skills.",
   },
   {
-    id: "startup-meetup",
+    id: "startup-business-meetup",
     title: "Startup & Business Meetup",
     category: "Business",
     date: "Oct 12, 2026",
     location: "Dhaka, Bangladesh",
     price: 20,
     image: "/events/business.jpg",
+    startTime: "5:00 PM",
+    endTime: "8:00 PM",
+    availableSeats: 90,
+    totalSeats: 200,
+    description:
+      "Meet entrepreneurs, founders and professionals and build meaningful business connections.",
+  },
+  {
+    id: "digital-marketing-summit",
+    title: "Digital Marketing Summit",
+    category: "Business",
+    date: "Oct 18, 2026",
+    location: "Dhaka, Bangladesh",
+    price: 35,
+    image: "/events/business.jpg",
+    startTime: "10:00 AM",
+    endTime: "4:00 PM",
+    availableSeats: 150,
+    totalSeats: 300,
+    description:
+      "Learn modern digital marketing strategies, growth techniques and customer acquisition.",
+  },
+  {
+    id: "live-jazz-night",
+    title: "Live Jazz Night",
+    category: "Music",
+    date: "Oct 24, 2026",
+    location: "Dhaka, Bangladesh",
+    price: 30,
+    image: "/events/music.jpg",
+    startTime: "7:00 PM",
+    endTime: "11:00 PM",
+    availableSeats: 65,
+    totalSeats: 180,
+    description:
+      "Enjoy a relaxing night of live jazz performed by talented local and international musicians.",
+  },
+  {
+    id: "react-developer-meetup",
+    title: "React Developer Meetup",
+    category: "Technology",
+    date: "Nov 02, 2026",
+    location: "Dhaka, Bangladesh",
+    price: 10,
+    image: "/events/tech.jpg",
+    startTime: "4:00 PM",
+    endTime: "7:00 PM",
+    availableSeats: 75,
+    totalSeats: 150,
+    description:
+      "Connect with React developers, share knowledge and discuss modern frontend development.",
+  },
+  {
+    id: "football-championship",
+    title: "Dhaka Football Championship",
+    category: "Sports",
+    date: "Nov 08, 2026",
+    location: "Dhaka, Bangladesh",
+    price: 12,
+    image: "/events/workshop.jpg",
+    startTime: "3:00 PM",
+    endTime: "7:00 PM",
+    availableSeats: 250,
+    totalSeats: 1000,
+    description:
+      "Watch competitive football and experience an exciting championship atmosphere with fellow fans.",
+  },
+  {
+    id: "photography-masterclass",
+    title: "Photography Masterclass",
+    category: "Workshop",
+    date: "Nov 15, 2026",
+    location: "Chattogram, Bangladesh",
+    price: 18,
+    image: "/events/workshop.jpg",
+    startTime: "11:00 AM",
+    endTime: "4:00 PM",
+    availableSeats: 30,
+    totalSeats: 80,
+    description:
+      "Learn practical photography techniques, composition, lighting and professional shooting workflows.",
+  },
+  {
+    id: "ai-innovation-forum",
+    title: "AI & Innovation Forum",
+    category: "Technology",
+    date: "Nov 22, 2026",
+    location: "Dhaka, Bangladesh",
+    price: 50,
+    image: "/events/tech.jpg",
+    startTime: "9:30 AM",
+    endTime: "5:30 PM",
+    availableSeats: 110,
+    totalSeats: 250,
+    description:
+      "Discover how artificial intelligence is transforming products, businesses and modern workplaces.",
+  },
+  {
+    id: "business-leadership-conference",
+    title: "Business Leadership Conference",
+    category: "Business",
+    date: "Dec 01, 2026",
+    location: "Dhaka, Bangladesh",
+    price: 45,
+    image: "/events/business.jpg",
+    startTime: "9:00 AM",
+    endTime: "4:00 PM",
+    availableSeats: 140,
+    totalSeats: 350,
+    description:
+      "Learn leadership strategies and connect with experienced business leaders and professionals.",
+  },
+  {
+    id: "winter-music-concert",
+    title: "Winter Music Concert",
+    category: "Music",
+    date: "Dec 12, 2026",
+    location: "Chattogram, Bangladesh",
+    price: 28,
+    image: "/events/music.jpg",
+    startTime: "6:30 PM",
+    endTime: "10:30 PM",
+    availableSeats: 200,
+    totalSeats: 600,
+    description:
+      "Celebrate the winter season with live performances, music and an unforgettable evening.",
   },
 ];

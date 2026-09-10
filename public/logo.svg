@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Brand Color Palette -->
+    <!-- Tailwind violet-600 Base Tone -->
+    <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7" /> <!-- violet-500 -->
+      <stop offset="50%" stop-color="#9333EA" /> <!-- violet-600 -->
+      <stop offset="100%" stop-color="#6B21A8" /> <!-- violet-800 -->
+    </linearGradient>
+
+    <!-- Overlay Accent Gradient -->
+    <linearGradient id="accent-overlay" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC" opacity="0.9" /> <!-- violet-400 -->
+      <stop offset="100%" stop-color="#9333EA" opacity="0.95" /> <!-- violet-600 -->
+    </linearGradient>
+
+    <!-- Subtle Premium Shadow -->
+    <filter id="soft-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#581C87" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <g filter="url(#soft-shadow)">
+    <!-- Main Ticket Body: Clean Geometric Contour with Notch Cutouts -->
+    <!-- Unified Path with Integrated Circular Side Notches -->
+    <path d="
+      M 160,130 
+      H 340 
+      A 24,24 0 0,1 364,154 
+      V 228 
+      A 22,22 0 0,0 364,272 
+      V 346 
+      A 24,24 0 0,1 340,370 
+      H 160 
+      A 24,24 0 0,1 136,346 
+      V 272 
+      A 22,22 0 0,0 136,228 
+      V 154 
+      A 24,24 0 0,1 160,130 
+      Z" 
+      fill="url(#brand-grad)" />
+
+    <!-- Secondary Overlapping Pass Notch Layer (Monogram/Depth) -->
+    <path d="
+      M 190,130 
+      H 340 
+      A 24,24 0 0,1 364,154 
+      V 228 
+      A 22,22 0 0,0 364,272 
+      V 346 
+      A 24,24 0 0,1 340,370 
+      H 190 
+      Z" 
+      fill="url(#accent-overlay)" 
+      opacity="0.25" />
+
+    <!-- Minimalist Perforated Separation Line -->
+    <line x1="136" y1="250" x2="364" y2="250" 
+          stroke="#FFFFFF" 
+          stroke-dasharray="6 8" 
+          stroke-linecap="round" 
+          stroke-width="2.5" 
+          opacity="0.4" />
+
+    <!-- Center Icon Mark: Stylized Abstract "E" & Ticket Notch Hybrid -->
+    <g transform="translate(250, 190)">
+      <!-- Minimalist Crest/Play Triangle Integration -->
+      <path d="M -18,-20 L 18,0 L -18,20 Z" 
+            fill="#FFFFFF" />
+      <!-- High-Precision Keyhole Notch in Icon -->
+      <circle cx="-18" cy="0" r="7" fill="url(#brand-grad)" />
+    </g>
+
+    <!-- Professional Typography Layout Below Notch -->
+    <g transform="translate(250, 310)" text-anchor="middle">
+      <!-- Main Brand Name -->
+      <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" 
+            font-size="22" 
+            font-weight="800" 
+            letter-spacing="5" 
+            fill="#FFFFFF">EVENT</text>
+      
+      <!-- Sub-brand Designation -->
+      <text y="22" 
+            font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" 
+            font-size="11" 
+            font-weight="500" 
+            letter-spacing="6" 
+            fill="#E9D5FF" 
+            opacity="0.9">PASS</text>
+    </g>
+
+    <!-- Subtle Accent Geometry -->
+    <circle cx="250" cy="348" r="2" fill="#FFFFFF" opacity="0.6" />
+  </g>
+</svg>
