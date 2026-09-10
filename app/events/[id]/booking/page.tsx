@@ -1,6 +1,5 @@
 import Container from "@/app/components/ui/Container";
 import BookingContent from "@/app/components/booking/BookingContent";
-
 import { featuredEvents } from "@/app/event";
 
 interface BookingPageProps {
@@ -12,13 +11,15 @@ export default async function BookingPage({
 }: BookingPageProps) {
   const { id } = await params;
 
-  const event = featuredEvents.find((item) => item.id === id);
+  const event = featuredEvents.find(
+    (item) => item.id === id
+  );
 
   if (!event) {
     return (
       <main className="min-h-screen bg-gray-50 py-20">
         <Container>
-          <div className="text-center">
+          <div className="mx-auto max-w-lg text-center">
             <h1 className="text-3xl font-bold text-gray-900">
               Event Not Found
             </h1>
@@ -39,7 +40,7 @@ export default async function BookingPage({
           eventId={event.id}
           eventTitle={event.title}
           ticketPrice={event.price}
-          bookedSeats={["A2", "A3", "B5", "C1", "D7"]}
+          bookedSeats={[]}
         />
       </Container>
     </main>
