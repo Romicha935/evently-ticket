@@ -1,13 +1,14 @@
+
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { LogOut, Menu, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 import Container from "../ui/Container";
 import Button from "../ui/Button";
-import Image from "next/image";
+import NotificationDropdown from "./NotificationDropdown";
 
 import { getUser, logoutUser, EventlyUser } from "@/app/lib/auth";
 
@@ -20,7 +21,6 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<EventlyUser | null>(null);
-  const pathname = usePathname();
 
   useEffect(() => {
     setUser(getUser());
@@ -30,6 +30,7 @@ export default function Navbar() {
     logoutUser();
     setUser(null);
     setIsOpen(false);
+
     window.location.href = "/";
   };
 
@@ -40,35 +41,29 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900"
+            className="flex items-center text-xl font-bold tracking-tight text-gray-900"
           >
-            <Image src="/logo.svg" alt="Evently Logo" width={32} height={32} />
-            <span>
-              Event<span className="text-violet-600">ly</span>
-            </span>
+            <Image
+              src="/logo.svg"
+              alt="Evently Logo"
+              width={40}
+              height={40}
+            />
+
+            Event<span className="text-violet-600">ly</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative py-1 text-sm font-medium transition-colors hover:text-violet-600 ${
-                    isActive ? "text-violet-600" : "text-gray-600"
-                  }`}
-                >
-                  {link.label}
-                  {/* Active Bottom Underline */}
-                  {isActive && (
-                    <span className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-violet-600 transition-all" />
-                  )}
-                </Link>
-              );
-            })}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-violet-600"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Desktop Actions */}
@@ -85,13 +80,13 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                {/* Notifications */}
+                <NotificationDropdown />
+
+                {/* Account */}
                 <Link
                   href="/account"
-                  className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
-                    pathname === "/account"
-                      ? "bg-violet-50 text-violet-600"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100 text-violet-600">
                     <User size={16} />
@@ -100,10 +95,11 @@ export default function Navbar() {
                   <span className="max-w-32 truncate">{user.name}</span>
                 </Link>
 
+                {/* Logout */}
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-xl p-2.5 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                  className="rounded-xl p-2.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
                   aria-label="Logout"
                   title="Logout"
                 >
@@ -127,28 +123,17 @@ export default function Navbar() {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="border-t border-gray-100 py-4 md:hidden">
-            <nav className="flex flex-col gap-1.5">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-violet-50 font-semibold text-violet-600"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-violet-600"
-                    }`}
-                  >
-                    <span>{link.label}</span>
-                    {isActive && (
-                      <span className="h-2 w-2 rounded-full bg-violet-600" />
-                    )}
-                  </Link>
-                );
-              })}
+            <nav className="flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-violet-600"
+                >
+                  {link.label}
+                </Link>
+              ))}
 
               {!user ? (
                 <div className="mt-2 flex gap-2 border-t border-gray-100 pt-4">
@@ -172,14 +157,14 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="mt-2 border-t border-gray-100 pt-4">
+                  {/* Mobile Notifications */}
+                  <NotificationDropdown />
+
+                  {/* Mobile Account */}
                   <Link
                     href="/account"
                     onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-3 transition-colors ${
-                      pathname === "/account"
-                        ? "bg-violet-50 text-violet-600"
-                        : "hover:bg-gray-50"
-                    }`}
+                    className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-gray-50"
                   >
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-violet-600">
                       <User size={17} />
@@ -196,6 +181,7 @@ export default function Navbar() {
                     </div>
                   </Link>
 
+                  {/* Mobile Logout */}
                   <button
                     type="button"
                     onClick={handleLogout}
