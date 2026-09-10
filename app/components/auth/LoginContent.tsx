@@ -1,8 +1,11 @@
+
 "use client";
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Eye, EyeOff, Lock, Mail, Ticket } from "lucide-react";
+
+import { setUser } from "@/app/lib/auth";
 
 export default function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,10 +15,14 @@ export default function LoginContent() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.log({
+    // Frontend-only mock authentication.
+    // Real JWT authentication will be connected with the backend later.
+    setUser({
+      name: email.split("@")[0] || "Evently User",
       email,
-      password,
     });
+
+    window.location.href = "/account";
   };
 
   return (
@@ -143,9 +150,7 @@ export default function LoginContent() {
                     onClick={() => setShowPassword((value) => !value)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-gray-700"
                     aria-label={
-                      showPassword
-                        ? "Hide password"
-                        : "Show password"
+                      showPassword ? "Hide password" : "Show password"
                     }
                   >
                     {showPassword ? (
@@ -198,3 +203,4 @@ export default function LoginContent() {
     </main>
   );
 }
+
