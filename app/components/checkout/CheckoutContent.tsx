@@ -92,14 +92,14 @@ export default function CheckoutContent({
     }));
   };
 
-  const handlePayment = () => {
-    console.log({
-      eventId: event.id,
-      selectedSeats,
-      customer,
-      totalAmount,
-    });
-  };
+const handlePayment = () => {
+  const params = new URLSearchParams({
+    eventId: event.id,
+    seats: selectedSeats.join(","),
+  });
+
+  window.location.href = `/payment?${params.toString()}`;
+};
 
   const isFormValid =
     customer.name.trim() !== "" &&
