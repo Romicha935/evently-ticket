@@ -112,14 +112,17 @@ export default function PaymentContent({
     card.cvc.trim() !== "" &&
     card.name.trim() !== "";
 
-  const handlePayment = () => {
-    console.log({
-      eventId: event.id,
-      selectedSeats,
-      paymentMethod,
-      totalAmount,
-    });
-  };
+const handlePayment = () => {
+  const bookingId = `EVT-${Date.now().toString().slice(-8)}`;
+
+  const params = new URLSearchParams({
+    bookingId,
+    eventId: event.id,
+    seats: selectedSeats.join(","),
+  });
+
+  window.location.href = `/bookings/success?${params.toString()}`;
+};
 
   return (
     <main className="min-h-screen bg-gray-50 py-10 sm:py-14">
