@@ -1,8 +1,9 @@
 
-import BookingOverview from "@/components/admin/dashboard/BookingOverview";
-import RecentBookings from "@/components/admin/dashboard/RecentBookings";
-import RecentPayments from "@/components/admin/dashboard/RecentPayments";
+
+import BookingOverview from "../components/admin/dashboard/BookingOverview";
 import DashboardStats from "../components/admin/dashboard/DashboardStats";
+import RecentBookings from "../components/admin/dashboard/Recentbooking";
+import RecentPayments from "../components/admin/dashboard/Recentpayment";
 
 export default function AdminDashboard() {
   return (
