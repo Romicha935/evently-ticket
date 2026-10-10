@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -83,10 +84,16 @@ export default function AdminSidebar() {
           <h1 className="text-xl font-bold tracking-tight text-gray-900">
             Evently
           </h1>
-          <p className="mt-0.5 text-xs text-gray-400">Admin Panel</p>
+          <p className="mt-0.5 text-xs text-gray-400">
+            Admin Panel
+          </p>
         </div>
 
-        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-50">
+        <button
+          type="button"
+          aria-label="Collapse sidebar"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-purple-50 hover:text-purple-600"
+        >
           <ChevronLeft size={16} />
         </button>
       </div>
@@ -106,16 +113,17 @@ export default function AdminSidebar() {
                 const active =
                   pathname === item.href ||
                   (item.href !== "/admin" &&
-                    pathname.startsWith(item.href));
+                    pathname.startsWith(item.href + "/"));
 
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                    aria-current={active ? "page" : undefined}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-200 ${
                       active
-                        ? "bg-black text-white shadow-sm"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        ? "bg-purple-600 text-white shadow-sm hover:bg-purple-700"
+                        : "text-gray-600 hover:bg-purple-50 hover:text-purple-700"
                     }`}
                   >
                     <Icon size={18} strokeWidth={1.8} />
@@ -128,19 +136,26 @@ export default function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Bottom */}
+      {/* Bottom Actions */}
       <div className="border-t border-gray-100 p-4">
         <Link
-          href="/settings"
-          className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100"
+          href="/admin/settings"
+          className={`mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-200 ${
+            pathname === "/admin/settings"
+              ? "bg-purple-600 text-white"
+              : "text-gray-600 hover:bg-purple-50 hover:text-purple-700"
+          }`}
         >
-          <Settings size={18} />
-          Settings
+          <Settings size={18} strokeWidth={1.8} />
+          <span>Settings</span>
         </Link>
 
-        <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50">
-          <LogOut size={18} />
-          Logout
+        <button
+          type="button"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50"
+        >
+          <LogOut size={18} strokeWidth={1.8} />
+          <span>Logout</span>
         </button>
       </div>
     </aside>
