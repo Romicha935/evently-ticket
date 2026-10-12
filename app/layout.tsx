@@ -1,9 +1,10 @@
+
 import type { Metadata } from "next";
 
 import "./globals.css";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
-
+import StoreProvider from "./StoreProvider";
 
 export const metadata: Metadata = {
   title: "Evently — Discover & Book Events",
@@ -19,10 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
+        <StoreProvider>
+          <Navbar />
 
-        <main>{children}</main>
-        <Footer/>
+          <main>{children}</main>
+
+          <Footer />
+        </StoreProvider>
       </body>
     </html>
   );
