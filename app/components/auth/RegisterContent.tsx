@@ -1,7 +1,9 @@
+
 "use client";
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Check,
   Eye,
@@ -11,17 +13,31 @@ import {
   Ticket,
   User,
 } from "lucide-react";
-import { setUser } from "@/app/lib/auth";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { setCredentials } from "../../redux/features/auth/authSlice";
+import { useRegisterMutation } from "../../redux/features/auth/authApi.";
+
+
+
 export default function RegisterContent() {
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [register, { isLoading, error }] = useRegisterMutation();
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -32,28 +48,91 @@ export default function RegisterContent() {
       ...previous,
       [name]: value,
     }));
+
+    setSuccessMessage("");
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-
-  if (formData.password !== formData.confirmPassword) {
-    alert("Passwords do not match.");
-    return;
-  }
-
-  setUser({
-    name: formData.name,
-    email: formData.email,
-  });
-
-  window.location.href = "/account";
-};
-
   const passwordLength = formData.password.length >= 8;
+
   const passwordMatch =
-    formData.password.length > 0 &&
+    formData.confirmPassword.length > 0 &&
     formData.password === formData.confirmPassword;
+
+  const getErrorMessage = () => {
+    if (!error) return "";
+
+    if ("data" in error) {
+      const data = error.data as
+        | { message?: string | string[] }
+        | undefined;
+
+      if (Array.isArray(data?.message)) {
+        return data.message.join(", ");
+      }
+
+      if (data?.message) {
+        return data.message;
+      }
+    }
+
+    if ("error" in error && error.error) {
+      return error.error;
+    }
+
+    return "Registration failed. Please try again.";
+  };
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setSuccessMessage("");
+
+    if (!passwordLength) {
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return;
+    }
+
+    try {
+      const response = await register({
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      }).unwrap();
+
+      // If the API returns a token and user, sign in immediately.
+      if (response.accessToken && response.user) {
+        dispatch(
+          setCredentials({
+            accessToken: response.accessToken,
+            user: response.user,
+          })
+        );
+
+        router.push("/account");
+        router.refresh();
+        return;
+      }
+
+      // If registration does not log the user in automatically.
+      setSuccessMessage(
+        response.message ||
+          "Account created successfully. Please sign in."
+      );
+
+      router.push("/login?registered=1");
+    } catch {
+      // RTK Query stores the API error in `error`.
+      // The error message is displayed below the form.
+    }
+  };
+
+  const inputClass =
+    "w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-100";
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12 sm:py-16">
@@ -68,7 +147,6 @@ export default function RegisterContent() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600">
                 <Ticket className="h-5 w-5" />
               </span>
-
               Evently
             </Link>
 
@@ -99,7 +177,6 @@ export default function RegisterContent() {
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-600">
                       <Check className="h-3.5 w-3.5" />
                     </span>
-
                     {item}
                   </div>
                 ))}
@@ -124,7 +201,6 @@ export default function RegisterContent() {
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-white">
                   <Ticket className="h-5 w-5" />
                 </span>
-
                 Evently
               </Link>
             </div>
@@ -139,32 +215,57 @@ export default function RegisterContent() {
               </p>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="mt-8 space-y-5"
-            >
-              {/* Name */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="mb-2 block text-sm font-medium text-gray-700"
-                >
-                  Full name
-                </label>
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              {/* First and Last Name */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="firstName"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
+                    First name
+                  </label>
 
-                <div className="relative">
-                  <User className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                  <div className="relative">
+                    <User className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
 
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Your full name"
-                    required
-                    className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
-                  />
+                    <input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      placeholder="First name"
+                      autoComplete="given-name"
+                      required
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="lastName"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
+                    Last name
+                  </label>
+
+                  <div className="relative">
+                    <User className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      placeholder="Last name"
+                      autoComplete="family-name"
+                      required
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -187,8 +288,9 @@ export default function RegisterContent() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
+                    autoComplete="email"
                     required
-                    className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
+                    className={inputClass}
                   />
                 </div>
               </div>
@@ -212,20 +314,18 @@ export default function RegisterContent() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Create a password"
+                    autoComplete="new-password"
+                    minLength={8}
                     required
                     className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-12 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
                   />
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword((value) => !value)
-                    }
+                    onClick={() => setShowPassword((value) => !value)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
                     aria-label={
-                      showPassword
-                        ? "Hide password"
-                        : "Show password"
+                      showPassword ? "Hide password" : "Show password"
                     }
                   >
                     {showPassword ? (
@@ -238,9 +338,7 @@ export default function RegisterContent() {
 
                 <p
                   className={`mt-2 text-xs ${
-                    passwordLength
-                      ? "text-green-600"
-                      : "text-gray-400"
+                    passwordLength ? "text-green-600" : "text-gray-400"
                   }`}
                 >
                   {passwordLength ? "✓" : "•"} At least 8 characters
@@ -262,12 +360,11 @@ export default function RegisterContent() {
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type={
-                      showConfirmPassword ? "text" : "password"
-                    }
+                    type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirm your password"
+                    autoComplete="new-password"
                     required
                     className={`w-full rounded-xl border bg-white py-3 pl-10 pr-12 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:ring-2 ${
                       formData.confirmPassword.length > 0
@@ -281,15 +378,13 @@ export default function RegisterContent() {
                   <button
                     type="button"
                     onClick={() =>
-                      setShowConfirmPassword(
-                        (value) => !value
-                      )
+                      setShowConfirmPassword((value) => !value)
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
                     aria-label={
                       showConfirmPassword
-                        ? "Hide password"
-                        : "Show password"
+                        ? "Hide confirm password"
+                        : "Show confirm password"
                     }
                   >
                     {showConfirmPassword ? (
@@ -303,9 +398,7 @@ export default function RegisterContent() {
                 {formData.confirmPassword.length > 0 && (
                   <p
                     className={`mt-2 text-xs ${
-                      passwordMatch
-                        ? "text-green-600"
-                        : "text-red-500"
+                      passwordMatch ? "text-green-600" : "text-red-500"
                     }`}
                   >
                     {passwordMatch
@@ -330,14 +423,14 @@ export default function RegisterContent() {
                 >
                   I agree to the{" "}
                   <Link
-                    href="#"
+                    href="/terms"
                     className="font-medium text-violet-600 hover:text-violet-700"
                   >
                     Terms of Service
                   </Link>{" "}
                   and{" "}
                   <Link
-                    href="#"
+                    href="/privacy"
                     className="font-medium text-violet-600 hover:text-violet-700"
                   >
                     Privacy Policy
@@ -346,12 +439,34 @@ export default function RegisterContent() {
                 </label>
               </div>
 
+              {/* API Error */}
+              {error && (
+                <div
+                  role="alert"
+                  className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {getErrorMessage()}
+                </div>
+              )}
+
+              {successMessage && (
+                <div
+                  role="status"
+                  className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+                >
+                  {successMessage}
+                </div>
+              )}
+
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+                disabled={
+                  isLoading || !passwordLength || !passwordMatch
+                }
+                className="w-full rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Create Account
+                {isLoading ? "Creating account..." : "Create Account"}
               </button>
             </form>
 
