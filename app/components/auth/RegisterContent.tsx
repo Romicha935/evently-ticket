@@ -13,20 +13,19 @@ import {
   Ticket,
   User,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import { setCredentials } from "../../redux/features/auth/authSlice";
 import { useRegisterMutation } from "../../redux/features/auth/authApi.";
-
-
 
 export default function RegisterContent() {
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
+
+  const [register, { isLoading, error }] = useRegisterMutation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState(false);
+
+  const [successMessage, setSuccessMessage] = useState("");
+  const [localError, setLocalError] = useState("");
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -36,8 +35,11 @@ export default function RegisterContent() {
     confirmPassword: "",
   });
 
-  const [register, { isLoading, error }] = useRegisterMutation();
-  const [successMessage, setSuccessMessage] = useState("");
+  const passwordLength = formData.password.length >= 8;
+
+  const passwordMatch =
+    formData.confirmPassword.length > 0 &&
+    formData.password === formData.confirmPassword;
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -50,15 +52,11 @@ export default function RegisterContent() {
     }));
 
     setSuccessMessage("");
+    setLocalError("");
   };
 
-  const passwordLength = formData.password.length >= 8;
-
-  const passwordMatch =
-    formData.confirmPassword.length > 0 &&
-    formData.password === formData.confirmPassword;
-
   const getErrorMessage = () => {
+    if (localError) return localError;
     if (!error) return "";
 
     if ("data" in error) {
@@ -86,13 +84,17 @@ export default function RegisterContent() {
     event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+
     setSuccessMessage("");
+    setLocalError("");
 
     if (!passwordLength) {
+      setLocalError("Password must contain at least 8 characters.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
+      setLocalError("Passwords do not match.");
       return;
     }
 
@@ -104,40 +106,28 @@ export default function RegisterContent() {
         password: formData.password,
       }).unwrap();
 
-      // If the API returns a token and user, sign in immediately.
-      if (response.accessToken && response.user) {
-        dispatch(
-          setCredentials({
-            accessToken: response.accessToken,
-            user: response.user,
-          })
-        );
-
-        router.push("/account");
-        router.refresh();
-        return;
-      }
-
-      // If registration does not log the user in automatically.
       setSuccessMessage(
-        response.message ||
-          "Account created successfully. Please sign in."
+        response?.message || "Account created successfully!"
       );
 
-      router.push("/login?registered=1");
+      // Redirect only after showing the success message.
+      window.setTimeout(() => {
+        router.push("/login?registered=1");
+      }, 1500);
     } catch {
-      // RTK Query stores the API error in `error`.
-      // The error message is displayed below the form.
+      // The API error is displayed below the form.
     }
   };
 
   const inputClass =
     "w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-100";
 
+  const errorMessage = getErrorMessage();
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12 sm:py-16">
       <div className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm lg:grid-cols-2">
-        {/* Left Side */}
+        {/* Left side */}
         <div className="hidden bg-gray-900 p-10 text-white lg:flex lg:flex-col lg:justify-between">
           <div>
             <Link
@@ -189,10 +179,10 @@ export default function RegisterContent() {
           </p>
         </div>
 
-        {/* Right Side */}
+        {/* Right side */}
         <div className="p-6 sm:p-10 lg:p-12">
           <div className="mx-auto max-w-md">
-            {/* Mobile Logo */}
+            {/* Mobile logo */}
             <div className="lg:hidden">
               <Link
                 href="/"
@@ -216,7 +206,7 @@ export default function RegisterContent() {
             </div>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-              {/* First and Last Name */}
+              {/* First and last name */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label
@@ -238,6 +228,7 @@ export default function RegisterContent() {
                       placeholder="First name"
                       autoComplete="given-name"
                       required
+                      disabled={isLoading || !!successMessage}
                       className={inputClass}
                     />
                   </div>
@@ -263,6 +254,7 @@ export default function RegisterContent() {
                       placeholder="Last name"
                       autoComplete="family-name"
                       required
+                      disabled={isLoading || !!successMessage}
                       className={inputClass}
                     />
                   </div>
@@ -290,6 +282,7 @@ export default function RegisterContent() {
                     placeholder="you@example.com"
                     autoComplete="email"
                     required
+                    disabled={isLoading || !!successMessage}
                     className={inputClass}
                   />
                 </div>
@@ -317,6 +310,7 @@ export default function RegisterContent() {
                     autoComplete="new-password"
                     minLength={8}
                     required
+                    disabled={isLoading || !!successMessage}
                     className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-12 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
                   />
 
@@ -324,9 +318,7 @@ export default function RegisterContent() {
                     type="button"
                     onClick={() => setShowPassword((value) => !value)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -345,7 +337,7 @@ export default function RegisterContent() {
                 </p>
               </div>
 
-              {/* Confirm Password */}
+              {/* Confirm password */}
               <div>
                 <label
                   htmlFor="confirmPassword"
@@ -366,6 +358,7 @@ export default function RegisterContent() {
                     placeholder="Confirm your password"
                     autoComplete="new-password"
                     required
+                    disabled={isLoading || !!successMessage}
                     className={`w-full rounded-xl border bg-white py-3 pl-10 pr-12 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:ring-2 ${
                       formData.confirmPassword.length > 0
                         ? passwordMatch
@@ -414,6 +407,7 @@ export default function RegisterContent() {
                   id="terms"
                   type="checkbox"
                   required
+                  disabled={isLoading || !!successMessage}
                   className="mt-0.5 h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
                 />
 
@@ -439,22 +433,30 @@ export default function RegisterContent() {
                 </label>
               </div>
 
-              {/* API Error */}
-              {error && (
+              {/* API error */}
+              {errorMessage && (
                 <div
                   role="alert"
                   className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
                 >
-                  {getErrorMessage()}
+                  {errorMessage}
                 </div>
               )}
 
+              {/* Success message */}
               {successMessage && (
                 <div
                   role="status"
+                  aria-live="polite"
                   className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
                 >
-                  {successMessage}
+                  <div className="flex items-center gap-2">
+                    <Check className="h-5 w-5 shrink-0" />
+                    <span>{successMessage}</span>
+                  </div>
+                  <p className="mt-1 pl-7 text-xs">
+                    Redirecting you to sign in...
+                  </p>
                 </div>
               )}
 
@@ -462,15 +464,22 @@ export default function RegisterContent() {
               <button
                 type="submit"
                 disabled={
-                  isLoading || !passwordLength || !passwordMatch
+                  isLoading ||
+                  !passwordLength ||
+                  !passwordMatch ||
+                  !!successMessage
                 }
                 className="w-full rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isLoading ? "Creating account..." : "Create Account"}
+                {isLoading
+                  ? "Creating account..."
+                  : successMessage
+                    ? "Account created!"
+                    : "Create Account"}
               </button>
             </form>
 
-            {/* Login */}
+            {/* Login link */}
             <p className="mt-7 text-center text-sm text-gray-500">
               Already have an account?{" "}
               <Link

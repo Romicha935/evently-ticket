@@ -1,8 +1,10 @@
+
 import { baseApi } from "../../api/baseApi";
-import { AuthUser, clearCredentials, setCredentials,  } from "./authSlice";
-
-
-
+import {
+  AuthUser,
+  clearCredentials,
+  setCredentials,
+} from "./authSlice";
 
 interface LoginRequest {
   email: string;
@@ -10,9 +12,14 @@ interface LoginRequest {
 }
 
 interface RegisterRequest {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+}
+
+interface MakeAdminRequest {
+  email: string;
 }
 
 interface AuthResponse {
@@ -26,6 +33,7 @@ interface MessageResponse {
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // Login
     login: builder.mutation<AuthResponse, LoginRequest>({
       query: (credentials) => ({
         url: "/auth/login",
@@ -44,13 +52,14 @@ export const authApi = baseApi.injectEndpoints({
             })
           );
         } catch {
-          // Failed login: do not set authentication state.
+          // Login failed.
         }
       },
 
       invalidatesTags: ["Auth"],
     }),
 
+    // Register
     register: builder.mutation<
       AuthResponse,
       RegisterRequest
@@ -65,8 +74,7 @@ export const authApi = baseApi.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
 
-          // Automatically authenticate only if registration
-          // returns a valid access token and user.
+          // Save credentials only if backend returns both.
           if (data?.accessToken && data?.user) {
             dispatch(
               setCredentials({
@@ -83,11 +91,27 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["Auth"],
     }),
 
+    // Promote user to admin
+    makeAdmin: builder.mutation<
+      MessageResponse,
+      MakeAdminRequest
+    >({
+      query: (body) => ({
+        url: "/auth/make-admin",
+        method: "POST",
+        body,
+      }),
+
+      invalidatesTags: ["Auth"],
+    }),
+
+    // Get logged-in user
     getMe: builder.query<AuthUser, void>({
       query: () => "/auth/me",
       providesTags: ["Auth"],
     }),
 
+    // Logout
     logout: builder.mutation<MessageResponse, void>({
       query: () => ({
         url: "/auth/logout",
@@ -98,7 +122,7 @@ export const authApi = baseApi.injectEndpoints({
         try {
           await queryFulfilled;
         } catch {
-          // Continue local logout even if the server request fails.
+          // Still clear local authentication.
         } finally {
           dispatch(clearCredentials());
           dispatch(baseApi.util.resetApiState());
@@ -111,6 +135,7 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useMakeAdminMutation,
   useGetMeQuery,
   useLogoutMutation,
-} = authApi;
+} = authApi; 
