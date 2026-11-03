@@ -2,14 +2,12 @@
   "name": "evently-ticket-frontend",
   "version": "0.1.0",
   "private": true,
- 
-"scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint"
-},
-
+  "scripts": {
+    "dev": "node api.js && node init && next dev",
+    "build": "node api.js && node init && next build",
+    "start": "node api.js && node init && next start",
+    "lint": "eslint"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
     "lucide-react": "^1.42.0",
