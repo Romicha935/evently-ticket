@@ -1,35 +1,3 @@
-<<<<<<< HEAD
-{
-  "name": "evently-ticket-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "node api.js && node init && next dev",
-    "build": "node api.js && node init && next build",
-    "start": "node api.js && node init && next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.13.0",
-    "lucide-react": "^1.42.0",
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-icons": "^5.7.0",
-    "react-redux": "^9.3.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
-}
-=======
 {
   "name": "evently-ticket-frontend",
   "version": "0.1.0",
@@ -60,4 +28,3 @@
     "typescript": "^5"
   }
 }
->>>>>>> 810c6d9dd39c3a1e8b5daa7f9ba87b7e9f7e01ac
